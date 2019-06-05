@@ -8,7 +8,9 @@ Created on Sat Sep  1 10:40:37 2018
 from model import ElFarolModel, Person
 
 ################# pra rodar sem o batch runner ##############
-model = ElFarolModel()
+memory_size = 5
+number_strategies = 10
+model = ElFarolModel(memory_size, number_strategies)
 
 for i in range(5):
     """ Calls step n times"""

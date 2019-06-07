@@ -8,18 +8,21 @@ Created on Sat Sep  1 10:40:37 2018
 from model import ElFarolModel, Person
 
 ################# pra rodar sem o batch runner ##############
-memory_size = 5
-number_strategies = 10
-model = ElFarolModel(memory_size, number_strategies)
+memory_size = 3
+number_strategies = 3
+number_persons = 8
+overcrowding_threshold = 5
+model = ElFarolModel(memory_size, number_strategies, number_persons, 
+                     overcrowding_threshold)
 
-for i in range(5):
+for i in range(20):
     """ Calls step n times"""
     print('rodada ' + str(i))
     model.step()
-    for obj in model.schedule.agents:
-        if isinstance(obj, Person):
+    #for obj in model.schedule.agents:
+        #if isinstance(obj, Person):
             #print('Lojista ' + str(obj.unique_id) + ' sales: ' + str(obj.sales) + ' lost sales: ' + str(obj.lost_sales))
-            print(obj)
+            #print(obj.history)
 #        if isinstance(obj, Portador):
 #            print('Portador ' + str(obj.unique_id) + 'recursos: ' + str(obj.recursos))
 

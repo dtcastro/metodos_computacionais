@@ -1,21 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 Created on Sun May 12 22:45:33 2019
 
 @author: dtcas
 """
 
-# TODO
-# 1 MAIN
-# FUNCAO QUE RECEBE A ORDEM OU LE DA TELA
-# TIRAR OS PRINTS
-# DIMENSIONAR O TAMANHO DA TELA
-# CRIAR UM REPOSITORIO DO GIT
-
-
 import turtle # um módulo do python para desenho https://docs.python.org/3/library/turtle.html
 
-# funciona pro 2 e quase pro 3 e 4; tem que deixar o tamanho fixo
 def hilbert(ordem, tamanho, rotacao):
     if (ordem == 0):
         return
@@ -23,34 +13,63 @@ def hilbert(ordem, tamanho, rotacao):
     turtle.left(rotacao)
     
     hilbert(ordem - 1, tamanho, -rotacao)
-    print("tamanho1: " + str(tamanho))
+    #print("tamanho1: " + str(tamanho))
     turtle.forward(tamanho)
     turtle.left(-rotacao)
     
     hilbert(ordem - 1, tamanho, rotacao)
-    print("tamanho2: " + str(tamanho))
+    #print("tamanho2: " + str(tamanho))
 
     turtle.forward(tamanho)
-    hilbert(ordem- 1, tamanho, rotacao)
+    hilbert(ordem - 1, tamanho, rotacao)
 
     turtle.left(-rotacao)
-    print("tamanho3: " + str(tamanho))
+    #print("tamanho3: " + str(tamanho))
 
     turtle.forward(tamanho)
     hilbert(ordem - 1, tamanho, -rotacao)
     turtle.left(rotacao)
 
-turtle.home()
-turtle.speed(10)
-print(turtle.screensize())
-print(turtle.pos())
-turtle.penup()
-turtle.setpos(-300, -250)
-turtle.pendown()
+if __name__ == '__main__':
 
-tamanho_inicial = 100
-ordem_inicial = 5
-hilbert(ordem_inicial, tamanho_inicial/ordem_inicial, 90)
-turtle.done()
+    tamanho_inicial = 50 # comprimento do segmento para a curva de ordem 1; 
+    # ordens maiores usam segmentos proporcionalmente menores
+    ordem_inicial = 6
+    rotacao = 90 # default da curva de Hilbert; a rigor, não precisa ser um parâmetro
+    direcao_inicial = 270 # define o direcionamento da curva; opções são 0, 90, 180 e 270
+    margem = 0.1 * tamanho_inicial * ordem_inicial # distância que o desenho deve estar dos limites da janela
 
-#TODO direcionamento inicial
+    turtle.home()
+    turtle.speed(100)
+    print(turtle.screensize())
+    turtle.screensize(canvwidth = tamanho_inicial * ordem_inicial + margem, 
+                      canvheight = tamanho_inicial * ordem_inicial + margem)
+    
+    #turtle.screensize(2000, 2000) => scrolls
+    print(turtle.screensize())
+    print(turtle.pos())
+    turtle.penup()
+    #turtle.setpos(-300, -250)
+    if direcao_inicial == 0:
+        turtle.setpos(-(tamanho_inicial * ordem_inicial - margem), 
+                      -(tamanho_inicial * ordem_inicial - margem))
+
+    if direcao_inicial == 90:
+        turtle.setpos((tamanho_inicial * ordem_inicial - margem), 
+                      -(tamanho_inicial * ordem_inicial - margem))
+    
+    if direcao_inicial == 180:
+        turtle.setpos((tamanho_inicial * ordem_inicial - margem), 
+                      (tamanho_inicial * ordem_inicial - margem))
+
+    if direcao_inicial == 270:
+        turtle.setpos(-(tamanho_inicial * ordem_inicial - margem), 
+                      (tamanho_inicial * ordem_inicial - margem))
+
+    # fazer pros demais
+    
+    turtle.left(direcao_inicial)
+    turtle.pendown()
+
+    hilbert(ordem_inicial, tamanho_inicial/ordem_inicial, rotacao)
+    turtle.done()

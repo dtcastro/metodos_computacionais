@@ -42,7 +42,7 @@ def hilbert(ordem, tamanho, rotacao):
 
 def desenha_quadrado(lado):
     """
-    Desenha o quadrado que circunda a curva de Hilbert
+    Desenha o quadrado que emoldura a curva de Hilbert
     """
     for i in range(4):
         turtle.forward(lado)
@@ -51,7 +51,7 @@ def desenha_quadrado(lado):
 if __name__ == '__main__':
 
     lado = 500 # lado do quadrado que envolve a curva de Hilbert
-    ordem_curva = 4 # ordem da curva de Hilbert
+    ordem_curva = 6 # ordem da curva de Hilbert
     tamanho_segmento = lado / (2 ** ordem_curva) # quanto maior a ordem da curva,
     # menor o tamanho do segmento; na figura do ex 7.9, o lado do quadrado é
     # dividido por 2 elevado à ordem da curva para se chegar ao tamanho do
@@ -59,12 +59,12 @@ if __name__ == '__main__':
     # em cada lado
     margem = tamanho_segmento / 2   
     rotacao = 90 # default da curva de Hilbert; a rigor, não seria um parâmetro
-    direcao_curva = 0 # define o direcionamento da curva; 
-    # opções são 0, 90, 180 e 270 graus
+    direcao_curva = 180 # define o direcionamento da curva; 
+    # opções são 0 (U para baixo), 90 (C), 180 (U) e 270 graus (C ao contrário)
 
     turtle.home()
     turtle.speed(100) # velocidade da tartaruga
-    # definição da janela
+    # definição do tamanho da janela
     largura_janela = 1.2 * lado
     altura_janela = 1.2 * lado
     turtle.screensize(canvwidth = largura_janela, canvheight = altura_janela)
@@ -80,23 +80,24 @@ if __name__ == '__main__':
     # define a posição para início do desenho da curva, com base na direção da 
     # curva; a curva é desenhada dentro do quadrado, respeitando a margem
     # definida
-    if direcao_curva == 0:
-        turtle.setpos(-(lado/2 - margem), 
-                      -(lado/2 - margem))
-
-    if direcao_curva == 90:
-        turtle.setpos((lado/2 - margem), 
-                      -(lado/2 - margem))
-    
-    if direcao_curva == 180:
-        turtle.setpos((lado/2 - margem), 
-                      (lado/2 - margem))
-
-    if direcao_curva == 270:
-        turtle.setpos(-(lado/2 - margem), 
-                      (lado/2 - margem))
+    if direcao_curva == 0: # curva virada para baixo (U de cabeça para baixo)
+        turtle.setpos(-(lado/2 - margem), -(lado/2 - margem)) # a curva é 
+        # desenhada a partir do 3o. quadrante no sentido horário
+    elif direcao_curva == 90: # curva virada para a direita (como na letra C)
+        turtle.setpos((lado/2 - margem), -(lado/2 - margem)) # a curva é 
+        # desenhada a partir do 4o. quadrante no sentido horário
+    elif direcao_curva == 180: # curva virada para cima (como na letra U)
+        turtle.setpos((lado/2 - margem), (lado/2 - margem)) # a curva é 
+        # desenhada a partir do 1o. quadrante no sentido horário
+    elif direcao_curva == 270: # curva virada para a esqueda (letra C ao contrário)
+        turtle.setpos(-(lado/2 - margem), (lado/2 - margem)) # a curva é
+        # desenhada a partir do 2o. quadrante no sentido horário
+    else:
+        turtle.done()
+        raise ValueError("Opções devem ser 0, 90, 180 ou 270")
 
     turtle.left(direcao_curva)
     turtle.pendown()
     hilbert(ordem_curva, tamanho_segmento, rotacao)
     turtle.done()
+    turtle.exitonclick()

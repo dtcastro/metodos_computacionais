@@ -76,4 +76,4 @@ if __name__ == '__main__':
     desenha_circulo(raio_regular)
     
     turtle.done()
-    
+    turtle.exitonclick()

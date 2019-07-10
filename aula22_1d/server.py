@@ -156,4 +156,4 @@ server = ModularServer(ElFarolModel,
                        model_params)
 
 # porta 8521 é a porta default
-server.launch(port = 8561)
+server.launch(port = 8578)

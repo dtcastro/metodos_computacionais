@@ -11,8 +11,6 @@ NetLogo se baseou, mas parece ter implementado de forma ligeiramente incorreta
 Comentários em inglês são de (Wilensky e Rand, 2015).
 """
 
-# TODO MUDAR PARA SINGLE GRID
-
 import random
 import numpy
 import math

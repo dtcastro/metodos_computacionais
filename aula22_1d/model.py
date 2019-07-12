@@ -63,20 +63,12 @@ class Person(Agent):
     bar e o bar não está lotado, ele seja recompensado; as recompensas são 
     acumuladas ao longo da simulação.
     """
-    def __init__(self, unique_id, model, memory_size, number_strategies, 
-                 number_persons, overcrowding_threshold, history):
+    def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
-        self.memory_size = memory_size
         # cria as estratégias
-        self.strategies = [Strategy(memory_size) for _ in range(number_strategies)]
-        self.number_persons = number_persons
-        self.overcrowding_threshold = overcrowding_threshold
+        self.strategies = [Strategy(model.memory_size) for 
+                           _ in range(model.number_strategies)]
         self.best_strategy = self.strategies[0]
-        # como as listas não são replicáveis, o histórico de frequência ao bar
-        # pode ser uma variável de instância; caso contrário, haveria um histórico
-        # para cada agente, replicando de forma desnecessária e podendo ocasionar
-        # problema de memória
-        self.history = history 
         self.attend = 0 # 1 se o agente planeja ir ao bar na próxima noite
         
         # PRIMEIRA EXTENSÃO DO NETLOGO
@@ -104,13 +96,13 @@ class Person(Agent):
         
         # Comment from Wilensky and Rand (2015): 
         # initialize best-score to a maximum, which is the lowest possible score
-        best_score = self.memory_size * self.number_persons + 1
+        best_score = self.model.memory_size * self.model.number_persons + 1
         
         if verbose:
             print("best_score :" + str(best_score))
         for i in range(len(self.strategies)):
             score = 0
-            for week in range(self.memory_size):
+            for week in range(self.model.memory_size):
                 # previsão da estratégia para semanas passadas, com base nas 
                 # informações históricas 
                 prediction = self.predict_attendance(self.strategies[i], 
@@ -125,10 +117,12 @@ class Person(Agent):
                 # havia mais estratégias ruins do que o esperado
                 # Quanto menor o escore, melhor a estratégia; assim, quanto mais
                 # perto do observado for a previsão, menor o escore
-                score += abs(self.history[week] - prediction)
+                score += abs(self.model.history[week] - prediction)
                 
                 if verbose:
-                    print("History[" + str(week) + "]: " + str(self.history[week]) + " score: " + str(score))
+                    print("History[" + str(week) + "]: " + 
+                                   str(self.model.history[week]) + 
+                                   " score: " + str(score))
 
             if (score <= best_score):
                 # atualizar a melhor estratégia corrente, com base no menor escore
@@ -172,10 +166,11 @@ class Person(Agent):
         for i in range(len(strategy.weights) - 1):
             # i+ 1 porque i começa em zero, mas o peso zero é a constante
             # usada acima
-            prediction += strategy.weights[i + 1] * self.history[week + i]
+            prediction += strategy.weights[i + 1] * self.model.history[week + i]
             
             if verbose:
-                print("iteracao " + str(i) + " " + str(strategy.weights[i + 1]) + " " + str(self.history[week + i]))
+                print("iteracao " + str(i) + " " + str(strategy.weights[i + 1])
+                + " " + str(self.model.history[week + i]))
 
         # Correção para implementar apropriadamente o modelo do Fogel (1999).
         # O código do NetLogo não arredonda e não pega o valor absoluto da
@@ -192,8 +187,8 @@ class Person(Agent):
         # Assim, previsões negativas ou superiores ao total de pessoas 
         # simplesmente fazem com que as estratégias sejam piores. O código do
         # NetLogo não tem expressões correspondentes a essas.
-        if prediction > self.number_persons:
-            prediction = self.number_persons
+        if prediction > self.model.number_persons:
+            prediction = self.model.number_persons
         
         return prediction # previsão para a frequência ao bar
         
@@ -211,7 +206,7 @@ class Person(Agent):
             print("prediction no step: " + str(prediction))
 
         # decide se vai ou não ao bar
-        self.attend = (prediction <= self.overcrowding_threshold)
+        self.attend = (prediction <= self.model.overcrowding_threshold)
 
         if self.attend:
             # se o agente decidiu ir ao bar, coloca o agente no bar
@@ -268,11 +263,7 @@ class ElFarolModel(Model):
         
         # Cria os agentes
         for i in range(self.number_persons):
-            # history pode ser passada como parametro pq listas não são duplicadas
-            # assim, garante-se que é uma history só, igual para todos os agentes
-            person = Person(i, self, self.memory_size, self.number_strategies, 
-                            self.number_persons, self.overcrowding_threshold, 
-                            self.history)
+            person = Person(i, self)
             self.schedule.add(person)
             
             # Coloco as pessoas em casa inicialmente
@@ -335,8 +326,7 @@ class ElFarolModel(Model):
         """
         self.history.pop() # remove o último elemento
         
-        # Não cria umanova lista, mantendo válidas as referência à variável
-        # history mantida pelos objetos da classe Person
+        # Não cria uma nova lista
         self.history.insert(0, self.attendance) 
         if verbose:
             print(self.history)

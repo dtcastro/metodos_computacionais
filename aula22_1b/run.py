@@ -8,7 +8,7 @@ from model import DLAModel
 wiggle_angle = 60
 number_particles = 2500
 probability_of_sticking = 1
-neighbor_influence = False
+neighbor_influence = True
 num_seeds = 1
 model = DLAModel(wiggle_angle, number_particles, probability_of_sticking, 
                  neighbor_influence, num_seeds)
@@ -19,6 +19,3 @@ for i in range(50):
     """
     print('Rodada ' + str(i))
     model.step()
-
-# Recupera os valores finais do coletor de dados
-#model_data = model.datacollector.get_model_vars_dataframe()
